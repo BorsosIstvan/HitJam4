@@ -82,7 +82,16 @@ function controleerJaar(knopElement, gekozenJaar, correctJaar) {
         
         // 🪝 EFFECT HAAKJE: Schakel hier de modulaire party_effects.js in bij een win!
         if (typeof startPartyRegen === "function") {
-            startPartyRegen('goud', '.app-container'); 
+            startPartyRegen('goud', '.app-container');
+            // 🔥 NIEUW: Stop de regen automatisch na exact 3 seconden!
+            setTimeout(function() {
+                if (typeof stopPartyRegen === "function") {
+                    stopPartyRegen(); // Stopt het aanmaken van nieuwe deeltjes
+                    
+                    // Ruim de overgebleven vallende deeltjes direct netjes op
+                    document.querySelectorAll('.party-drop').forEach(drop => drop.remove());
+                }
+            }, 3000);
         }
     } else {
         knopElement.style.borderColor = "var(--accent-color)";
