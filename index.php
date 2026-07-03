@@ -68,7 +68,7 @@ $stmt->execute([$username]);
             </div>
 
             <!-- KNOP NAAR DE LIVE MULTIPLAYER GAME -->
-            <a href="speel.php" class="btn btn-primary">🎮 Start Multiplayer Battle</a>
+            <a href="hj_party_speel.php" class="btn btn-primary">🎮 Start Multiplayer Battle</a>
 
             <a href="index.php?logout=1" class="btn btn-secondary" style="color: #ff2d55; margin-top: 20px; font-size: 14px; padding: 10px;">Uitloggen</a>
         </div>
