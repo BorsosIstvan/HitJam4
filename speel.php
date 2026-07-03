@@ -1,7 +1,7 @@
 <?php
 session_start();
 if (!isset($_SESSION['loggedin'])) { header("Location: login.php"); exit; }
-require_once('hj2_db.php');
+require_once('hj_db.php');
 
 // Haal een willekeurige track op
 try {
