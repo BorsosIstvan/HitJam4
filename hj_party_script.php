@@ -6,7 +6,9 @@ const maxRondes = 5;
 
 document.addEventListener("DOMContentLoaded", function() {
     if (spelers.length > 0) {
-        document.getElementById('schermSetup').classList.remove('active');
+        const setupScherm = document.getElementById('schermSetup');
+        if(setupScherm) setupScherm.classList.remove('active');
+        
         if (huidigeRonde > maxRondes) {
             toonEindstand();
         } else {
@@ -17,6 +19,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
 function voegSpelerToe() {
     const input = document.getElementById('spelerNaamInput');
+    if(!input) return;
     const naam = input.value.trim();
     if (naam === "") return;
     spelers.push({ naam: naam, score: 0 });
@@ -32,6 +35,7 @@ function verwijderSpeler(index) {
 function updateSpelerLijstUI() {
     const box = document.getElementById('spelerLijstBox');
     const btn = document.getElementById('btnStartGame');
+    if(!box || !btn) return;
     box.innerHTML = "";
     spelers.forEach((speler, idx) => {
         box.innerHTML += `
@@ -54,14 +58,20 @@ function startHetSpel() {
 
 function laadBeurtScherm() {
     wisselScherm('schermBeurt');
-    document.getElementById('txtHuidigeSpeler').innerText = spelers[huidigeSpelerIndex].naam;
+    const txtSpeler = document.getElementById('txtHuidigeSpeler');
+    if(txtSpeler && spelers[huidigeSpelerIndex]) {
+        txtSpeler.innerText = spelers[huidigeSpelerIndex].naam;
+    }
 }
 
 function activeerQuizSectie() {
     wisselScherm('schermQuiz');
-    document.getElementById('quizSpelerNaam').innerText = `Beurt van: ${spelers[huidigeSpelerIndex].naam}`;
+    const txtQuizSpeler = document.getElementById('quizSpelerNaam');
+    if(txtQuizSpeler && spelers[huidigeSpelerIndex]) {
+        txtQuizSpeler.innerText = `Beurt van: ${spelers[huidigeSpelerIndex].naam}`;
+    }
     const audio = document.getElementById('partyAudioEngine');
-    if (audio) audio.play().catch(e => console.log("Klik vereist"));
+    if (audio) audio.play().catch(e => console.log("Klik vereist om af te spelen"));
 }
 
 function controleerJaar(knopElement, gekozenJaar, correctJaar) {
@@ -72,14 +82,12 @@ function controleerJaar(knopElement, gekozenJaar, correctJaar) {
     if (gekozenJaar === correctJaar) {
         knopElement.style.borderColor = "var(--neon-cyan)";
         knopElement.style.background = "rgba(0, 255, 204, 0.1)";
-        feedbackText.innerHTML = "<span style='color: var(--neon-cyan);'>🎉 GOED GERADEN!</span>";
+        if(feedbackText) feedbackText.innerHTML = "<span style='color: var(--neon-cyan);'>🎉 GOED GERADEN!</span>";
         spelers[huidigeSpelerIndex].score += 100;
-        card.style.borderColor = "var(--neon-cyan)";
     } else {
         knopElement.style.borderColor = "var(--neon-pink)";
         knopElement.style.background = "rgba(255, 45, 85, 0.1)";
-        feedbackText.innerHTML = "<span style='color: var(--neon-pink);'>❌ HELAAS FOUT!</span>";
-        card.style.borderColor = "var(--neon-pink)";
+        if(feedbackText) feedbackText.innerHTML = "<span style='color: var(--neon-pink);'>❌ HELAAS FOUT!</span>";
         document.querySelectorAll('.btn-jaar').forEach(btn => {
             if (parseInt(btn.innerText) === correctJaar) {
                 btn.style.borderColor = "var(--neon-cyan)";
@@ -87,29 +95,35 @@ function controleerJaar(knopElement, gekozenJaar, correctJaar) {
         });
     }
     sessionStorage.setItem('hjPartySpelers', JSON.stringify(spelers));
-    document.getElementById('feedbackSectie').style.display = "block";
+    const fbSectie = document.getElementById('feedbackSectie');
+    if(fbSectie) fbSectie.style.display = "block";
 }
 
+// 🔥 FIX: Typefout hersteld en herlaad-logica beveiligd tegen lussen
 function volgendeBeurt() {
     const audio = document.getElementById('partyAudioEngine');
     if (audio) audio.pause();
+    
     huidigeSpelerIndex++;
     if (huidigeSpelerIndex >= spelers.length) {
         huidigeSpelerIndex = 0;
         huidigeRonde++;
         sessionStorage.setItem('hjPartyRonde', huidigeRonde.toString());
     }
-    sessionStorage.setItem('hjPartyIndex', Hills = huidigeSpelerIndex.toString());
+    
+    sessionStorage.setItem('hjPartyIndex', huidigeSpelerIndex.toString());
+    
     if (huidigeRonde > maxRondes) {
         toonEindstand();
     } else {
-        window.location.reload();
+        window.location.href = 'speel.php';
     }
 }
 
 function toonEindstand() {
     wisselScherm('schermEind');
     const box = document.getElementById('eindklassementBox');
+    if(!box) return;
     box.innerHTML = "";
     let gerangschikt = [...spelers].sort((a, b) => b.score - a.score);
     gerangschikt.forEach((speler, idx) => {
@@ -129,6 +143,7 @@ function opnieuwSpelen() {
 
 function wisselScherm(schermId) {
     document.querySelectorAll('.game-screen').forEach(s => s.classList.remove('active'));
-    document.getElementById(schermId).classList.add('active');
+    const doelScherm = document.getElementById(schermId);
+    if(doelScherm) doelScherm.classList.add('active');
 }
 </script>
