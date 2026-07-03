@@ -91,7 +91,7 @@ function controleerJaar(knopElement, gekozenJaar, correctJaar) {
                     // Ruim de overgebleven vallende deeltjes direct netjes op
                     document.querySelectorAll('.party-drop').forEach(drop => drop.remove());
                 }
-            }, 3000);
+            }, 1000);
         }
     } else {
         knopElement.style.borderColor = "var(--accent-color)";
