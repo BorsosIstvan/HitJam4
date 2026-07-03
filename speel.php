@@ -110,13 +110,13 @@ if (empty($preview_url)) {
 		<?php //require_once('comp_punten.php'); ?>
 
         <!-- 🧱 BOUWSTEEN 1: AUDIO CONTROLLER -->
-        <?php //require_once('comp_audio.php'); ?>
+        <?php require_once('comp_audio.php'); ?>
 		
 		<!-- 🧱 BOUWSTEEN 2: GEHEIME INFOKAART -->
         <?php //require_once('comp_info.php'); ?>
 		
         <!-- 🧱 BOUWSTEEN 2: GEHEIME INFOKAART -->
-        <?php //require_once('comp_nieuwe_info.php'); ?>
+        <?php require_once('comp_nieuwe_info.php'); ?>
 			
 		<!-- 🧱 BOUWSTEEN 4: NIEUW! MEERKEUZE QUIZ KNOPPEN -->
         <?php require_once('comp_quiz_info.php'); ?>
