@@ -60,7 +60,7 @@ function activeerQuizSectie() {
     
     // 🪝 EFFECT HAAKJE: Muziek start met spelen. Activeer hier eventueel een effect.
     if (typeof startPartyRegen === "function") {
-         startPartyRegen('neon', '.app-container'); 
+        toggleDiscoAchtergrond(true, '.app-container'); 
     }
 
     const txtQuiz = document.getElementById('quizSpelerNaam');

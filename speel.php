@@ -85,6 +85,7 @@ sort($jaren_lijst);
     </style>
     <!-- MODULAIRE EFFECTEN BESTAND KOPPELING -->
     <script src="party_effects.js"></script>
+    <script src="party_effects2.js"></script>
 </head>
 <body>
     <div class="app-container">
