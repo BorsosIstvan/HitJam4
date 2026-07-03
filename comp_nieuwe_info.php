@@ -3,7 +3,7 @@
     
     <!-- STANDAARD TEKST (Als de gegevens nog geheim zijn) -->
     <div id="infoGeheimTxt" style="font-size: 18px; font-weight: bold; color: #ff2d55; text-transform: uppercase; letter-spacing: 1px; padding: 20px 0; text-align: center;">
-        👁️ Klik om te onthullen
+    Welke jaar is dit lied?
     </div>
 
     <!-- DE GEGEVENS (Standaard verborgen) -->
