@@ -58,7 +58,7 @@ $stmt->execute([$username]);
 
     <div class="app-container">
         <div class="header-section">
-            <h1 class="logo">HitJam 2</h1>
+            <h1 class="logo">HitJam 4</h1>
             <div class="tagline">The Democratic Battle</div>
         </div>
 
@@ -74,7 +74,7 @@ $stmt->execute([$username]);
         </div>
 
         <div class="footer">
-            HITJAM V2 • 100% INDEPENDENT MODULE
+            HITJAM V4 • 100% INDEPENDENT MODULE
         </div>
     </div>
     <script>

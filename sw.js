@@ -3,8 +3,8 @@ const ASSETS = [
   '/HitJam/',
   '/HitJam4/index.html',
   '/HitJam4/manifest.json',
-  '/HitJam4/icon/icon-192.png',
-  '/HitJam4/icon/icon-512.png'
+  '/HitJam2/icon/icon-192.png',
+  '/HitJam2/icon/icon-512.png'
 ];
 
 // Bestanden opslaan tijdens installatie
