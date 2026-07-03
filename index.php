@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once('hj2_db.php');
+require_once('hj_db.php');
 
 // AFHANDELEN VAN UITLOGGEN
 if (isset($_GET['logout'])) { 

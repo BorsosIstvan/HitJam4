@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once('hj2_db.php');
+require_once('hj_db.php');
 
 // Als iemand al is ingelogd, stuur hem direct door naar het hoofdmenu
 if (isset($_SESSION['loggedin'])) {
