@@ -84,7 +84,6 @@ sort($jaren_lijst);
         .footer { font-size: 11px; color: #444; margin-top: 20px; }
     </style>
     <!-- MODULAIRE EFFECTEN BESTAND KOPPELING -->
-    <script src="party_effects.js"></script>
     <script src="party_effects2.js"></script>
 </head>
 <body>
