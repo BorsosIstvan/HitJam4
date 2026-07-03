@@ -23,7 +23,7 @@ function voegSpelerToe() {
     const naam = input.value.trim();
     if (naam === "") return;
     
-    const icons = ["🎰", "🎲", "🃏", "💎", "👑", "🔥", "🚀"];
+    const icons = ["🕺", "💃", "🎧", "🎤", "🎸", "🎶", "⚡"];
     const randomIcon = icons[spelers.length % icons.length];
     
     spelers.push({ naam: randomIcon + " " + naam, score: 0 });
@@ -51,7 +51,6 @@ function updateSpelerLijstUI() {
     btn.style.display = spelers.length >= 1 ? "block" : "none";
 }
 
-// 🔥 FIX: De spatie is hier weggehaald uit de functienaam!
 function startHetSpel() {
     sessionStorage.setItem('hjPartySpelers', JSON.stringify(spelers));
     sessionStorage.setItem('hjPartyIndex', '0');
@@ -66,8 +65,8 @@ function laadBeurtScherm() {
     const txtSpeler = document.getElementById('txtHuidigeSpeler');
     if(txtSpeler && spelers[huidigeSpelerIndex]) {
         txtSpeler.innerHTML = `
-            <div style="font-size:20px; color:var(--neon-gold); margin-bottom:10px;">RONDE ${huidigeRonde} / ${maxRondes}</div>
-            <div style="font-size:42px; font-weight:900; color:#fff; text-shadow:0 0 20px var(--neon-cyan);">${spelers[huidigeSpelerIndex].naam}</div>
+            <div style="font-size:18px; color:var(--neon-pink); font-weight:900; letter-spacing:2px; margin-bottom:10px;">RONDE ${huidigeRonde} / ${maxRondes}</div>
+            <div style="font-size:42px; font-weight:950; color:#fff; text-shadow:0 0 20px var(--neon-purple);">${spelers[huidigeSpelerIndex].naam}</div>
         `;
     }
 }
@@ -76,18 +75,19 @@ function activeerQuizSectie() {
     wisselScherm('schermQuiz');
     const txtQuizSpeler = document.getElementById('quizSpelerNaam');
     if(txtQuizSpeler && spelers[huidigeSpelerIndex]) {
-        let scoreOverzicht = '<div style="margin-bottom:20px; font-size:13px; background:#0b0c10; padding:12px; border-radius:14px; display:flex; justify-content:center; gap:12px; flex-wrap:wrap; border:2px solid var(--border-color);">';
+        let scoreOverzicht = '<div style="margin-bottom:20px; font-size:13px; background:#070212; padding:12px; border-radius:14px; display:flex; justify-content:center; gap:12px; flex-wrap:wrap; border:2px solid var(--border-color);">';
         spelers.forEach(s => {
-            let isActief = s.naam === spelers[huidigeSpelerIndex].naam ? 'border:1px solid var(--neon-cyan); background:rgba(0,255,204,0.05); padding:4px 10px; border-radius:8px; font-weight:900; color:#fff;' : 'color:#555; padding:4px;';
+            let isActief = s.naam === spelers[huidigeSpelerIndex].naam ? 'border:1px solid var(--neon-cyan); background:rgba(0,240,255,0.08); padding:4px 10px; border-radius:8px; font-weight:900; color:#fff; text-shadow:0 0 5px var(--neon-cyan);' : 'color:#64537d; padding:4px;';
             scoreOverzicht += `<span style="${isActief}">${s.naam}: ${s.score}</span>`;
         });
         scoreOverzicht += '</div>';
 
-        txtQuizSpeler.innerHTML = `${scoreOverzicht}<div style="color:var(--neon-cyan); font-size:20px; font-weight:900; letter-spacing:1px; text-transform:uppercase;">🎰 JOUW BEURT!</div>`;
+        txtQuizSpeler.innerHTML = `${scoreOverzicht}<div style="color:var(--neon-purple); font-size:18px; font-weight:900; letter-spacing:2px; text-shadow:0 0 10px var(--neon-purple)">⚡ DISCO CHANCE! ⚡</div>`;
     }
     
-    const slotNum = document.getElementById('slotCijfer');
-    if(slotNum) slotNum.classList.add('slot-rolling');
+    // Zet de VU-meter bars direct in beweging (dansen)
+    const equalizer = document.getElementById('equalizerBox');
+    if(equalizer) equalizer.classList.add('vu-dancing');
 
     const audio = document.getElementById('partyAudioEngine');
     if (audio) audio.play().catch(e => console.log("Klik vereist"));
@@ -96,34 +96,33 @@ function activeerQuizSectie() {
 function controleerJaar(knopElement, gekozenJaar, correctJaar) {
     document.querySelectorAll('.btn-jaar').forEach(btn => btn.disabled = true);
     
-    const slotNum = document.getElementById('slotCijfer');
-    if(slotNum) {
-        slotNum.classList.remove('slot-rolling');
-        slotNum.innerText = correctJaar;
-        slotNum.style.color = "var(--neon-cyan)";
-    }
+    // Stop de dansende VU-meter beweging subtiel
+    const equalizer = document.getElementById('equalizerBox');
+    if(equalizer) equalizer.classList.remove('vu-dancing');
 
     const feedbackText = document.getElementById('quizFeedbackText');
     const card = document.getElementById('partyInfoCard');
     
     if (gekozenJaar === correctJaar) {
         knopElement.style.borderColor = "var(--neon-cyan)";
-        knopElement.style.background = "linear-gradient(180deg, rgba(0,255,204,0.2) 0%, rgba(0,0,0,0) 100%)";
-        if(feedbackText) feedbackText.innerHTML = "<span style='color: var(--neon-cyan); text-shadow:0 0 15px var(--neon-cyan);'>🎰 BIG WIN! (+100p)</span>";
+        knopElement.style.background = "linear-gradient(180deg, rgba(0,240,255,0.2) 0%, rgba(0,0,0,0) 100%)";
+        knopElement.style.boxShadow = "0 0 20px var(--neon-cyan)";
+        if(feedbackText) feedbackText.innerHTML = "<span style='color: var(--neon-cyan); text-shadow:0 0 15px var(--neon-cyan);'>🎉 VOLTREFFER! (+100p)</span>";
         spelers[huidigeSpelerIndex].score += 100;
-        if(card) { card.style.borderColor = "var(--neon-cyan)"; card.style.boxShadow = "0 0 30px rgba(0,255,204,0.25)"; }
+        if(card) { card.style.borderColor = "var(--neon-cyan)"; card.style.boxShadow = "0 0 30px rgba(0,240,255,0.25)"; }
         
-        besprenkelMunten();
+        // Activeer het neon confetti-feest
+        besprenkelConfetti();
     } else {
         knopElement.style.borderColor = "var(--neon-pink)";
-        knopElement.style.background = "linear-gradient(180deg, rgba(255,0,85,0.2) 0%, rgba(0,0,0,0) 100%)";
-        if(feedbackText) feedbackText.innerHTML = "<span style='color: var(--neon-pink); text-shadow:0 0 15px var(--neon-pink);'>❌ GEEN PRIJS!</span>";
-        if(card) { card.style.borderColor = "var(--neon-pink)"; card.style.boxShadow = "0 0 30px rgba(255,0,85,0.15)"; }
+        knopElement.style.background = "linear-gradient(180deg, rgba(255,0,127,0.2) 0%, rgba(0,0,0,0) 100%)";
+        if(feedbackText) feedbackText.innerHTML = "<span style='color: var(--neon-pink); text-shadow:0 0 15px var(--neon-pink);'>❌ MISSGESLAGEN!</span>";
+        if(card) { card.style.borderColor = "var(--neon-pink)"; card.style.boxShadow = "0 0 30px rgba(255,0,127,0.2)"; }
         
         document.querySelectorAll('.btn-jaar').forEach(btn => {
             if (parseInt(btn.innerText) === correctJaar) {
                 btn.style.borderColor = "var(--neon-cyan)";
-                btn.style.boxShadow = "0 0 15px rgba(0,255,204,0.4)";
+                btn.style.boxShadow = "0 0 15px rgba(0,240,255,0.5)";
             }
         });
     }
@@ -133,18 +132,22 @@ function controleerJaar(knopElement, gekozenJaar, correctJaar) {
     if(fbSectie) fbSectie.style.display = "block";
 }
 
-function besprenkelMunten() {
+function besprenkelConfetti() {
     const container = document.querySelector('.app-container');
     if(!container) return;
-    for (let i = 0; i < 30; i++) {
+    const neonKleuren = ["var(--neon-pink)", "var(--neon-cyan)", "var(--neon-purple)", "var(--neon-yellow)"];
+    
+    for (let i = 0; i < 40; i++) {
         setTimeout(() => {
             const coin = document.createElement('div');
             coin.classList.add('coin');
-            coin.style.left = Math.random() * 90 + '%';
-            coin.style.animationDuration = (Math.random() * 0.7 + 0.8) + 's';
+            coin.style.left = Math.random() * 95 + '%';
+            coin.style.background = neonKleuren[Math.floor(Math.random() * neonKleuren.length)];
+            coin.style.boxShadow = `0 0 8px ${coin.style.background}`;
+            coin.style.animationDuration = (Math.random() * 0.6 + 0.6) + 's';
             container.appendChild(coin);
-            setTimeout(() => coin.remove(), 1500);
-        }, i * 40);
+            setTimeout(() => coin.remove(), 1200);
+        }, i * 30);
     }
 }
 
@@ -177,24 +180,25 @@ function toonEindstand() {
     let hoogsteScore = gerangschikt.length > 0 ? gerangschikt[0].score : 0;
     
     let winnaars = gerangschikt.filter(s => s.score === hoogsteScore).map(s => s.naam);
-    let winnaarTekst = winnaars.length > 1 ? `🤝 CO-WINNAARS: ${winnaars.join(' & ')}` : `👑 CASINO KING: ${winnaars}`;
+    let winnaarTekst = winnaars.length > 1 ? `🤝 REMISE IN DE CLUB: ${winnaars.join(' & ')}` : `👑 DANCEFLOOR HERO: ${winnaars}`;
     
     box.innerHTML += `
-        <div style="background:linear-gradient(135deg, #2c1a04 0%, #110b02 100%); border:3px solid var(--neon-gold); padding:25px 20px; border-radius:22px; margin-bottom:25px; font-size:22px; font-weight:900; color:var(--neon-gold); text-shadow:0 0 15px var(--neon-gold); box-shadow:0 0 30px rgba(255,170,0,0.25);">
+        <div style="background:linear-gradient(135deg, #24052e 0%, #0c0214 100%); border:3px solid var(--neon-purple); padding:25px 20px; border-radius:22px; margin-bottom:25px; font-size:22px; font-weight:950; color:#fff; text-shadow:0 0 15px var(--neon-purple); box-shadow:0 0 30px rgba(157,0,255,0.4);">
             ${winnaarTekst}<br>
-            <span style="font-size:15px; color:#fff; font-weight:normal; text-shadow:none; display:inline-block; margin-top:5px;">Met een score van <b>${hoogsteScore}</b> punten! 🔥</span>
+            <span style="font-size:15px; color:var(--neon-cyan); font-weight:bold; display:inline-block; margin-top:5px;">Heerst de zaal met <b>${hoogsteScore}</b> punten! ⚡</span>
         </div>`;
     
     gerangschikt.forEach((speler, idx) => {
-        let randStijl = idx === 0 ? 'border-color: var(--neon-gold); background:rgba(255,170,0,0.04);' : 'border-color: var(--border-color);';
+        let randStijl = idx === 0 ? 'border-color: var(--neon-cyan); background:rgba(0,240,255,0.05);' : 'border-color: var(--border-color);';
         box.innerHTML += `
             <div class="player-badge" style="${randStijl} padding:18px;">
-                <span style="font-size:18px; ${idx === 0 ? 'color:var(--neon-gold);' : ''}">#${idx+1} ${speler.naam}</span>
-                <span style="color: var(--neon-cyan); font-size:20px; font-weight:900;">${speler.score} Pts</span>
+                <span style="font-size:18px; ${idx === 0 ? 'color:var(--neon-cyan); text-shadow:0 0 5px var(--neon-cyan);' : ''}">#${idx+1} ${speler.naam}</span>
+                <span style="color: var(--neon-pink); font-size:20px; font-weight:900; text-shadow:0 0 5px var(--neon-pink);">${speler.score} Pts</span>
             </div>`;
     });
     
-    setInterval(besprenkelMunten, 2000);
+    // Blijf een subtiele feestregen sprenkelen op het eindscherm
+    setInterval(besprenkelConfetti, 1500);
 }
 
 function opnieuwSpelen() {
