@@ -82,7 +82,7 @@ function controleerJaar(knopElement, gekozenJaar, correctJaar) {
         
         // 🪝 EFFECT HAAKJE: Schakel hier de modulaire party_effects.js in bij een win!
         if (typeof startPartyRegen === "function") {
-            startPartyRegen('goud'); 
+            startPartyRegen('goud', '.app-container'); 
         }
     } else {
         knopElement.style.borderColor = "var(--accent-color)";

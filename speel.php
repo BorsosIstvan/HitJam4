@@ -67,7 +67,7 @@ sort($jaren_lijst);
             --success-color: #00ffcc;
         }
         body { font-family: 'Segoe UI', system-ui, sans-serif; margin: 0; background-color: var(--bg-color); color: #ffffff; display: flex; justify-content: center; min-height: 100vh; }
-        .app-container { width: 100%; max-width: 450px; background: #111216; padding: 25px 20px; box-sizing: border-box; display: flex; flex-direction: column; justify-content: space-between; text-align: center; }
+        .app-container { width: 100%; max-width: 450px; background: #111216; padding: 25px 20px; box-sizing: border-box; display: flex; flex-direction: column; justify-content: space-between; text-align: center; position: relative; overflow: hidden; }
         .logo-area { margin-bottom: 20px; }
         .logo { font-size: 32px; font-weight: 900; color: #fff; margin: 0; text-transform: uppercase; }
         .game-screen { display: none; }
