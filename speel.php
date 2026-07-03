@@ -1,14 +1,26 @@
 <?php
 session_start();
-if (!isset($_SESSION['loggedin'])) { header("Location: login.php"); exit; }
+
+// 1. SESSIECONTROLE
+if (!isset($_SESSION['loggedin'])) { 
+    header("Location: login.php"); 
+    exit; 
+}
+
 require_once('hj2_db.php');
 
+// 2. HAAL EEN WILLEKEURIG LIEDJE UIT SQLITE
 try {
     $stmt = $db->query("SELECT id, artist, title, year FROM game_songs ORDER BY RANDOM() LIMIT 1");
     $song = $stmt->fetch(PDO::FETCH_ASSOC);
-    if (!$song) { die("Database is leeg."); }
-} catch (Exception $e) { die("Database fout: " . $e->getMessage()); }
+    if (!$song) { 
+        die("<p style='color:red; text-align:center; margin-top:50px;'>Fout: Database is leeg.</p>"); 
+    }
+} catch (Exception $e) { 
+    die("Database fout: " . $e->getMessage()); 
+}
 
+// 3. ITUNES API INTEGRATIE
 $schone_artiest = str_replace('&', ' ', $song['artist']);
 $zoekterm = urlencode($schone_artiest . " " . $song['title']);
 $api_url = "https://itunes.apple.com/search?term=" . $zoekterm . "&limit=1&entity=song";
@@ -24,15 +36,21 @@ curl_close($ch);
 $preview_url = "";
 if ($response) {
     $json = json_decode($response, true);
-    if (isset($json['results']['previewUrl'])) { $preview_url = $json['results']['previewUrl']; }
+    if (isset($json['results'][0]['previewUrl'])) { 
+        $preview_url = $json['results'][0]['previewUrl']; 
+    }
 }
-if (empty($preview_url)) { header("Location: speel.php"); exit; }
 
+// 4. JAARKEUZE GENEREREN
 $echt_jaar = (int)$song['year'];
 $jaren_lijst = [$echt_jaar];
-while (count($jaren_lijst) < 4) {
+$pogingen = 0;
+while (count($jaren_lijst) < 4 && $pogingen < 50) {
+    $pogingen++;
     $nep_jaar = $echt_jaar + rand(-7, 7);
-    if (!in_array($nep_jaar, $jaren_lijst) && $nep_jaar <= 2026) { $jaren_lijst[] = $nep_jaar; }
+    if (!in_array($nep_jaar, $jaren_lijst) && $nep_jaar <= 2026) { 
+        $jaren_lijst[] = $nep_jaar; 
+    }
 }
 sort($jaren_lijst);
 ?>
@@ -48,10 +66,12 @@ sort($jaren_lijst);
     <div class="app-container">
         <div class="logo-area"><h1 class="logo">HitJam</h1><div class="subtitle">🪩 Disco Edition</div></div>
 
+        <!-- VEILIGHEIDSVENTIEL: GEEN REDIRECTS MEER, MAAR EEN NET DISCO FOUTSCHERM -->
         <?php if (empty($preview_url)): ?>
             <div class="game-screen active" style="margin: 40px 0;">
-                <p style="color: var(--neon-pink); font-weight: bold; font-size: 18px;">🪩 TRACK MIXING ERROR</p>
-                <button class="btn btn-primary" onclick="window.location.reload();">🔄 VOLGENDE PLAAT KIEZEN</button>
+                <p style="color: var(--neon-pink); font-weight: bold; font-size: 18px; text-shadow:0 0 10px var(--neon-pink);">🪩 DJ WISSELT VAN PLAAT</p>
+                <p style="color: #aaa; font-size: 14px; margin-bottom: 25px;">iTunes kon de 30s preview voor dit specifieke nummer niet laden.</p>
+                <button class="btn btn-primary" onclick="window.location.reload();">🔄 VOLGENDE PLAAT MIXEN</button>
             </div>
         <?php else: ?>
 
@@ -76,7 +96,6 @@ sort($jaren_lijst);
             <div id="schermQuiz" class="game-screen">
                 <div id="quizSpelerNaam"></div>
                 
-                <!-- 📊 DANSENDE VU-METER AUDIO BALKEN -->
                 <div class="vu-container" id="equalizerBox">
                     <div class="vu-bar"></div>
                     <div class="vu-bar"></div>
