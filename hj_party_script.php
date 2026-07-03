@@ -23,7 +23,6 @@ function voegSpelerToe() {
     const naam = input.value.trim();
     if (naam === "") return;
     
-    // Elke speler krijgt een leuk casino-icoontje automatically
     const icons = ["🎰", "🎲", "🃏", "💎", "👑", "🔥", "🚀"];
     const randomIcon = icons[spelers.length % icons.length];
     
@@ -52,7 +51,7 @@ function updateSpelerLijstUI() {
     btn.style.display = spelers.length >= 1 ? "block" : "none";
 }
 
-function startHetSpel() {
+function startHet Spel() {
     sessionStorage.setItem('hjPartySpelers', JSON.stringify(spelers));
     sessionStorage.setItem('hjPartyIndex', '0');
     sessionStorage.setItem('hjPartyRonde', '1');
@@ -86,7 +85,6 @@ function activeerQuizSectie() {
         txtQuizSpeler.innerHTML = `${scoreOverzicht}<div style="color:var(--neon-cyan); font-size:20px; font-weight:900; letter-spacing:1px; text-transform:uppercase;">🎰 JOUW BEURT!</div>`;
     }
     
-    // Start de fruitautomaat-rolanimatie op het scherm
     const slotNum = document.getElementById('slotCijfer');
     if(slotNum) slotNum.classList.add('slot-rolling');
 
@@ -94,10 +92,10 @@ function activeerQuizSectie() {
     if (audio) audio.play().catch(e => console.log("Klik vereist"));
 }
 
-function/controleerJaar(knopElement, gekozenJaar, correctJaar) {
+// FIX: Spatie gecorrigeerd in plaats van schuine streep!
+function controleerJaar(knopElement, gekozenJaar, correctJaar) {
     document.querySelectorAll('.btn-jaar').forEach(btn => btn.disabled = true);
     
-    // Stop de gokkast rotatie direct en onthul het juiste jaar flitsend
     const slotNum = document.getElementById('slotCijfer');
     if(slotNum) {
         slotNum.classList.remove('slot-rolling');
@@ -115,7 +113,6 @@ function/controleerJaar(knopElement, gekozenJaar, correctJaar) {
         spelers[huidigeSpelerIndex].score += 100;
         if(card) { card.style.borderColor = "var(--neon-cyan)"; card.style.boxShadow = "0 0 30px rgba(0,255,204,0.25)"; }
         
-        // Start het vallende muntenfestijn in het casino
         besprenkelMunten();
     } else {
         knopElement.style.borderColor = "var(--neon-pink)";
@@ -138,6 +135,7 @@ function/controleerJaar(knopElement, gekozenJaar, correctJaar) {
 
 function besprenkelMunten() {
     const container = document.querySelector('.app-container');
+    if(!container) return;
     for (let i = 0; i < 30; i++) {
         setTimeout(() => {
             const coin = document.createElement('div');
@@ -184,7 +182,7 @@ function toonEindstand() {
     box.innerHTML += `
         <div style="background:linear-gradient(135deg, #2c1a04 0%, #110b02 100%); border:3px solid var(--neon-gold); padding:25px 20px; border-radius:22px; margin-bottom:25px; font-size:22px; font-weight:900; color:var(--neon-gold); text-shadow:0 0 15px var(--neon-gold); box-shadow:0 0 30px rgba(255,170,0,0.25);">
             ${winnaarTekst}<br>
-            <span style="font-size:15px; color:#fff; font-weight:normal; text-shadow:none; display:inline-block; margin-top:5px;">Met een fantastische score van <b>${hoogsteScore}</b> punten! 🔥</span>
+            <span style="font-size:15px; color:#fff; font-weight:normal; text-shadow:none; display:inline-block; margin-top:5px;">Met een score van <b>${hoogsteScore}</b> punten! 🔥</span>
         </div>`;
     
     gerangschikt.forEach((speler, idx) => {
@@ -196,7 +194,7 @@ function toonEindstand() {
             </div>`;
     });
     
-    setInterval(besprenkelMunten, 2000); // Blijf munten gooien op het eindscherm!
+    setInterval(besprenkelMunten, 2000);
 }
 
 function opnieuwSpelen() {
