@@ -37,48 +37,44 @@ function controleerJaar(knopElement, gekozenJaar, correctJaar) {
     const alleKnoppen = document.querySelectorAll('.btn-jaar-keuze');
     alleKnoppen.forEach(btn => btn.disabled = true);
 
-    // 2. Stop de muziek onmiddellijk via de audio-bouwsteen
-    const audio = document.getElementById('soloAudio');
-    if (audio) audio.pause();
-    const playBtn = document.getElementById('playBtn');
-    if (playBtn) { playBtn.innerHTML = "▶️"; playBtn.classList.remove('playing'); }
+    // ❌ VERWIJDERD: De code die de audio stopte is hier weggehaald! De muziek blijft doorspelen.
 
     const feedbackDiv = document.getElementById('quizFeedback');
-    feedbackDiv.style.display = 'block';
+    if (feedbackDiv) feedbackDiv.style.display = 'block';
 
-    // 3. Geef visuele feedback en bereken de score [INDEX]
+    // 2. Geef visuele feedback en bereken de score
+    const scoreEl = document.getElementById('localScore');
+    const streakEl = document.getElementById('localStreak');
+    
+    let huidigeStreak = streakEl ? parseInt(streakEl.innerText) || 0 : 0;
+    let huidigeScore = scoreEl ? parseInt(scoreEl.innerText) || 0 : 0;
+
     if (gekozenJaar === correctJaar) {
         knopElement.style.borderColor = '#00ffcc';
         knopElement.style.background = 'rgba(0, 255, 204, 0.1)';
         
-        // Score berekening
-        let huidigeStreak = parseInt(document.getElementById('localStreak').innerText) + 1;
+        huidigeStreak += 1;
         let puntenWinst = 50 + (huidigeStreak * 10);
-        let huidigeScore = parseInt(document.getElementById('localScore').innerText) + puntenWinst;
+        huidigeScore += puntenWinst;
         
-        // Scherm direct updaten
-        document.getElementById('localScore').innerText = huidigeScore;
-        document.getElementById('localStreak').innerText = huidigeStreak;
-        feedbackDiv.innerHTML = `<span style='color:#00ffcc;'>🎉 Goed! (+${puntenWinst} Pnt)</span>`;
+        if (scoreEl) scoreEl.innerText = huidigeScore;
+        if (streakEl) streakEl.innerText = huidigeStreak;
+        if (feedbackDiv) feedbackDiv.innerHTML = `<span style='color:#00ffcc;'>🎉 Goed! (+${puntenWinst} Pnt)</span>`;
         
-        // Synchroniseer met SQLite database via de punten-bouwsteen [INDEX]
         if (typeof updateDatabaseScore === "function") {
             updateDatabaseScore(puntenWinst, huidigeStreak);
         }
     } else {
         knopElement.style.borderColor = '#ff2d55';
         knopElement.style.background = 'rgba(255, 45, 85, 0.1)';
-        feedbackDiv.innerHTML = "<span style='color:#ff2d55;'>❌ Helaas Fout!</span>";
+        if (feedbackDiv) feedbackDiv.innerHTML = "<span style='color:#ff2d55;'>❌ Helaas Fout!</span>";
         
-        // Reset streak op het scherm naar 0
-        document.getElementById('localStreak').innerText = 0;
+        if (streakEl) streakEl.innerText = 0;
         
-        // Synchroniseer de reset van de streak met de database [INDEX]
         if (typeof updateDatabaseScore === "function") {
             updateDatabaseScore(0, 0);
         }
         
-        // Licht de juiste knop op in het groen zodat je het antwoord ziet
         alleKnoppen.forEach(btn => {
             if (parseInt(btn.innerText) === correctJaar) { 
                 btn.style.borderColor = '#00ffcc'; 
@@ -87,9 +83,9 @@ function controleerJaar(knopElement, gekozenJaar, correctJaar) {
         });
     }
 
-    // 4. Activeer direct de onthullingskaart en wissel de menuknoppen om [INDEX]
-    document.getElementById('infoCard').style.display = 'block';
-    document.getElementById('revealBtn').style.display = 'none';
-    document.getElementById('nextBtn').style.display = 'block';
+    // 3. Activeer direct de onthullingskaart
+    const infoCard = document.getElementById('infoCard') || document.querySelector('.song-info-card');
+    if (infoCard) infoCard.style.display = 'block';
 }
+
 </script>
