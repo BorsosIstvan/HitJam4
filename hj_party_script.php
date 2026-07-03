@@ -1,9 +1,8 @@
 <script>
-// We halen de spelersdata en voortgang veilig op uit het browsergeheugen
 let spelers = JSON.parse(sessionStorage.getItem('hjPartySpelers')) || [];
 let huidigeSpelerIndex = parseInt(sessionStorage.getItem('hjPartyIndex')) || 0;
 let huidigeRonde = parseInt(sessionStorage.getItem('hjPartyRonde')) || 1;
-const maxRondes = 5; // Het spel stopt automatisch na 5 rondes
+const maxRondes = 5;
 
 document.addEventListener("DOMContentLoaded", function() {
     if (spelers.length > 0) {
@@ -24,8 +23,11 @@ function voegSpelerToe() {
     const naam = input.value.trim();
     if (naam === "") return;
     
-    // Elke nieuwe speler begint uiteraard op 0 punten
-    spelers.push({ naam: naam, score: 0 });
+    // Elke speler krijgt een leuk casino-icoontje automatically
+    const icons = ["🎰", "🎲", "🃏", "💎", "👑", "🔥", "🚀"];
+    const randomIcon = icons[spelers.length % icons.length];
+    
+    spelers.push({ naam: randomIcon + " " + naam, score: 0 });
     input.value = "";
     updateSpelerLijstUI();
 }
@@ -43,8 +45,8 @@ function updateSpelerLijstUI() {
     spelers.forEach((speler, idx) => {
         box.innerHTML += `
             <div class="player-badge">
-                <span>👤 ${speler.naam}</span>
-                <span style="color:#ff2d55; cursor:pointer; font-size:20px;" onclick="verwijderSpeler(${idx})">×</span>
+                <span style="font-size:18px;">${speler.naam}</span>
+                <span style="color:var(--neon-pink); cursor:pointer; font-size:24px; font-weight:900;" onclick="verwijderSpeler(${idx})">×</span>
             </div>`;
     });
     btn.style.display = spelers.length >= 1 ? "block" : "none";
@@ -63,8 +65,10 @@ function laadBeurtScherm() {
     wisselScherm('schermBeurt');
     const txtSpeler = document.getElementById('txtHuidigeSpeler');
     if(txtSpeler && spelers[huidigeSpelerIndex]) {
-        // Toon de naam van de actieve speler en de huidige spelronde
-        txtSpeler.innerHTML = `${spelers[huidigeSpelerIndex].naam}<br><span style="font-size:16px; color:#888; font-weight:normal;">Ronde ${huidigeRonde} van ${maxRondes}</span>`;
+        txtSpeler.innerHTML = `
+            <div style="font-size:20px; color:var(--neon-gold); margin-bottom:10px;">RONDE ${huidigeRonde} / ${maxRondes}</div>
+            <div style="font-size:42px; font-weight:900; color:#fff; text-shadow:0 0 20px var(--neon-cyan);">${spelers[huidigeSpelerIndex].naam}</div>
+        `;
     }
 }
 
@@ -72,49 +76,78 @@ function activeerQuizSectie() {
     wisselScherm('schermQuiz');
     const txtQuizSpeler = document.getElementById('quizSpelerNaam');
     if(txtQuizSpeler && spelers[huidigeSpelerIndex]) {
-        // Bouw een LIVE TUSSENSTAND-balkje boven de jaarknoppen
-        let scoreOverzicht = '<div style="margin-bottom:15px; font-size:12px; background:rgba(255,255,255,0.02); padding:10px; border-radius:10px; display:flex; justify-content:center; gap:15px; flex-wrap:wrap; border:1px solid #222;">';
+        let scoreOverzicht = '<div style="margin-bottom:20px; font-size:13px; background:#0b0c10; padding:12px; border-radius:14px; display:flex; justify-content:center; gap:12px; flex-wrap:wrap; border:2px solid var(--border-color);">';
         spelers.forEach(s => {
-            let isActief = s.naam === spelers[huidigeSpelerIndex].naam ? 'border-bottom:2px solid var(--neon-cyan); padding-bottom:2px; font-weight:900;' : 'color:#888;';
-            scoreOverzicht += `<span style="${isActief}">👤 ${s.naam}: ${s.score}p</span>`;
+            let isActief = s.naam === spelers[huidigeSpelerIndex].naam ? 'border:1px solid var(--neon-cyan); background:rgba(0,255,204,0.05); padding:4px 10px; border-radius:8px; font-weight:900; color:#fff;' : 'color:#555; padding:4px;';
+            scoreOverzicht += `<span style="${isActief}">${s.naam}: ${s.score}</span>`;
         });
         scoreOverzicht += '</div>';
 
-        txtQuizSpeler.innerHTML = `${scoreOverzicht}<div style="color:var(--neon-cyan); letter-spacing:1px; font-size:18px; font-weight:900;">🎯 ${spelers[huidigeSpelerIndex].naam}, KIES HET JAAR:</div>`;
+        txtQuizSpeler.innerHTML = `${scoreOverzicht}<div style="color:var(--neon-cyan); font-size:20px; font-weight:900; letter-spacing:1px; text-transform:uppercase;">🎰 JOUW BEURT!</div>`;
     }
+    
+    // Start de fruitautomaat-rolanimatie op het scherm
+    const slotNum = document.getElementById('slotCijfer');
+    if(slotNum) slotNum.classList.add('slot-rolling');
+
     const audio = document.getElementById('partyAudioEngine');
-    if (audio) audio.play().catch(e => console.log("Klik vereist om af te spelen"));
+    if (audio) audio.play().catch(e => console.log("Klik vereist"));
 }
 
-function controleerJaar(knopElement, gekozenJaar, correctJaar) {
+function/controleerJaar(knopElement, gekozenJaar, correctJaar) {
     document.querySelectorAll('.btn-jaar').forEach(btn => btn.disabled = true);
+    
+    // Stop de gokkast rotatie direct en onthul het juiste jaar flitsend
+    const slotNum = document.getElementById('slotCijfer');
+    if(slotNum) {
+        slotNum.classList.remove('slot-rolling');
+        slotNum.innerText = correctJaar;
+        slotNum.style.color = "var(--neon-cyan)";
+    }
+
     const feedbackText = document.getElementById('quizFeedbackText');
     const card = document.getElementById('partyInfoCard');
     
     if (gekozenJaar === correctJaar) {
         knopElement.style.borderColor = "var(--neon-cyan)";
-        knopElement.style.background = "rgba(0, 255, 204, 0.1)";
-        if(feedbackText) feedbackText.innerHTML = "<span style='color: var(--neon-cyan);'>🎉 GOED GERADEN! (+100p)</span>";
-        
-        // Voeg 100 punten toe aan de score van de huidige speler
+        knopElement.style.background = "linear-gradient(180deg, rgba(0,255,204,0.2) 0%, rgba(0,0,0,0) 100%)";
+        if(feedbackText) feedbackText.innerHTML = "<span style='color: var(--neon-cyan); text-shadow:0 0 15px var(--neon-cyan);'>🎰 BIG WIN! (+100p)</span>";
         spelers[huidigeSpelerIndex].score += 100;
+        if(card) { card.style.borderColor = "var(--neon-cyan)"; card.style.boxShadow = "0 0 30px rgba(0,255,204,0.25)"; }
+        
+        // Start het vallende muntenfestijn in het casino
+        besprenkelMunten();
     } else {
         knopElement.style.borderColor = "var(--neon-pink)";
-        knopElement.style.background = "rgba(255, 45, 85, 0.1)";
-        if(feedbackText) feedbackText.innerHTML = "<span style='color: var(--neon-pink);'>❌ HELAAS FOUT!</span>";
+        knopElement.style.background = "linear-gradient(180deg, rgba(255,0,85,0.2) 0%, rgba(0,0,0,0) 100%)";
+        if(feedbackText) feedbackText.innerHTML = "<span style='color: var(--neon-pink); text-shadow:0 0 15px var(--neon-pink);'>❌ GEEN PRIJS!</span>";
+        if(card) { card.style.borderColor = "var(--neon-pink)"; card.style.boxShadow = "0 0 30px rgba(255,0,85,0.15)"; }
+        
         document.querySelectorAll('.btn-jaar').forEach(btn => {
             if (parseInt(btn.innerText) === correctJaar) {
                 btn.style.borderColor = "var(--neon-cyan)";
-                btn.style.background = "rgba(0, 255, 204, 0.05)";
+                btn.style.boxShadow = "0 0 15px rgba(0,255,204,0.4)";
             }
         });
     }
     
-    // Sla de bijgewerkte score direct op in de browser-sessie
     sessionStorage.setItem('hjPartySpelers', JSON.stringify(spelers));
-    
     const fbSectie = document.getElementById('feedbackSectie');
     if(fbSectie) fbSectie.style.display = "block";
+}
+
+function besprenkelMunten() {
+    const container = document.querySelector('.app-container');
+    for (let i = 0; i < 30; i++) {
+        setTimeout(() => {
+            const coin = document.createElement('div');
+            coin.classList.add('coin');
+            coin.style.left = Math.random() * 90 + '%';
+            coin.style.animationDuration = (Math.random() * 0.7 + 0.8) + 's';
+            container.appendChild(coin);
+            setTimeout(() => coin.remove(), 1500);
+        }, i * 40);
+    }
 }
 
 function volgendeBeurt() {
@@ -122,14 +155,11 @@ function volgendeBeurt() {
     if (audio) audio.pause();
     
     huidigeSpelerIndex++;
-    
-    // Als iedereen in de groep aan de beurt is geweest, schuiven we op naar de volgende ronde
     if (huidigeSpelerIndex >= spelers.length) {
         huidigeSpelerIndex = 0;
         huidigeRonde++;
         sessionStorage.setItem('hjPartyRonde', huidigeRonde.toString());
     }
-    
     sessionStorage.setItem('hjPartyIndex', huidigeSpelerIndex.toString());
     
     if (huidigeRonde > maxRondes) {
@@ -145,31 +175,28 @@ function toonEindstand() {
     if(!box) return;
     box.innerHTML = "";
     
-    // Sorteer de spelerslijst zodat de hoogste score bovenaan staat
     let gerangschikt = [...spelers].sort((a, b) => b.score - a.score);
     let hoogsteScore = gerangschikt[0] ? gerangschikt[0].score : 0;
     
-    // Toon de absolute winnaar(s) groot boven de scorelijst
     let winnaars = gerangschikt.filter(s => s.score === hoogsteScore).map(s => s.naam);
-    let winnaarTekst = winnaars.length > 1 ? `🤝 GELIJKSPEL TUSSEN: ${winnaars.join(' & ')}!` : `👑 DE WINNAAR IS: ${winnaars[0]}!`;
+    let winnaarTekst = winnaars.length > 1 ? `🤝 CO-WINNAARS: ${winnaars.join(' & ')}` : `👑 CASINO KING: ${winnaars}`;
     
     box.innerHTML += `
-        <div style="background:linear-gradient(135deg, rgba(255,149,0,0.1), rgba(255,45,85,0.1)); border:2px dashed var(--neon-gold); padding:20px; border-radius:18px; margin-bottom:25px; font-size:20px; font-weight:900; color:var(--neon-gold); text-transform:uppercase; letter-spacing:1px; animation:gecombineerdFadeIn 0.6s ease;">
-            ${winnaarTekst}<br><span style="font-size:14px; color:#fff; font-weight:normal; text-transform:none;">Met een monsterscore van <b>${hoogsteScore}</b> punten! ✨</span>
-        </div>
-        <div style="text-align:left; color:#888; font-size:12px; margin-bottom:10px; text-transform:uppercase; letter-spacing:1px; padding-left:5px;">Volledig Klassement:</div>`;
+        <div style="background:linear-gradient(135deg, #2c1a04 0%, #110b02 100%); border:3px solid var(--neon-gold); padding:25px 20px; border-radius:22px; margin-bottom:25px; font-size:22px; font-weight:900; color:var(--neon-gold); text-shadow:0 0 15px var(--neon-gold); box-shadow:0 0 30px rgba(255,170,0,0.25);">
+            ${winnaarTekst}<br>
+            <span style="font-size:15px; color:#fff; font-weight:normal; text-shadow:none; display:inline-block; margin-top:5px;">Met een fantastische score van <b>${hoogsteScore}</b> punten! 🔥</span>
+        </div>`;
     
-    // Bouw de ranking badges voor alle overige spelers op het scherm
     gerangschikt.forEach((speler, idx) => {
-        let positieSymbool = idx === 0 ? "🏆" : `🏅`;
-        let specifiekeRand = idx === 0 ? 'border-color: var(--neon-gold); background:rgba(255,149,0,0.03);' : 'border-color: var(--border-color);';
-        
+        let randStijl = idx === 0 ? 'border-color: var(--neon-gold); background:rgba(255,170,0,0.04);' : 'border-color: var(--border-color);';
         box.innerHTML += `
-            <div class="player-badge" style="${specifiekeRand} padding:15px 20px;">
-                <span style="font-size:18px; ${idx === 0 ? 'color:var(--neon-gold); font-weight:900;' : ''}">${positieSymbool} ${speler.naam}</span>
-                <span style="color: var(--neon-cyan); font-size:18px; font-weight:900;">${speler.score} Pnt</span>
+            <div class="player-badge" style="${randStijl} padding:18px;">
+                <span style="font-size:18px; ${idx === 0 ? 'color:var(--neon-gold);' : ''}">#${idx+1} ${speler.naam}</span>
+                <span style="color: var(--neon-cyan); font-size:20px; font-weight:900;">${speler.score} Pts</span>
             </div>`;
     });
+    
+    setInterval(besprenkelMunten, 2000); // Blijf munten gooien op het eindscherm!
 }
 
 function opnieuwSpelen() {
