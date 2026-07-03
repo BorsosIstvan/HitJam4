@@ -51,7 +51,8 @@ function updateSpelerLijstUI() {
     btn.style.display = spelers.length >= 1 ? "block" : "none";
 }
 
-function startHet Spel() {
+// 🔥 FIX: De spatie is hier weggehaald uit de functienaam!
+function startHetSpel() {
     sessionStorage.setItem('hjPartySpelers', JSON.stringify(spelers));
     sessionStorage.setItem('hjPartyIndex', '0');
     sessionStorage.setItem('hjPartyRonde', '1');
@@ -92,7 +93,6 @@ function activeerQuizSectie() {
     if (audio) audio.play().catch(e => console.log("Klik vereist"));
 }
 
-// FIX: Spatie gecorrigeerd in plaats van schuine streep!
 function controleerJaar(knopElement, gekozenJaar, correctJaar) {
     document.querySelectorAll('.btn-jaar').forEach(btn => btn.disabled = true);
     
@@ -174,7 +174,7 @@ function toonEindstand() {
     box.innerHTML = "";
     
     let gerangschikt = [...spelers].sort((a, b) => b.score - a.score);
-    let hoogsteScore = gerangschikt[0] ? gerangschikt[0].score : 0;
+    let hoogsteScore = gerangschikt.length > 0 ? gerangschikt[0].score : 0;
     
     let winnaars = gerangschikt.filter(s => s.score === hoogsteScore).map(s => s.naam);
     let winnaarTekst = winnaars.length > 1 ? `🤝 CO-WINNAARS: ${winnaars.join(' & ')}` : `👑 CASINO KING: ${winnaars}`;
