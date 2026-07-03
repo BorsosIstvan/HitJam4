@@ -119,7 +119,7 @@ if (empty($preview_url)) {
         <?php //require_once('comp_nieuwe_info.php'); ?>
 			
 		<!-- 🧱 BOUWSTEEN 4: NIEUW! MEERKEUZE QUIZ KNOPPEN -->
-        <?php //require_once('comp_quiz.php'); ?>
+        <?php require_once('comp_quiz.php'); ?>
 		
 		<!-- 🧱 BOUWSTEEN 3: ACTIEKNOPPEN -->
         <?php //require_once('comp_knoppen.php'); ?>
