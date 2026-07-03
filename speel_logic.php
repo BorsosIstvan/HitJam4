@@ -60,7 +60,7 @@ function activeerQuizSectie() {
     
     // 🪝 EFFECT HAAKJE: Muziek start met spelen. Activeer hier eventueel een effect.
     if (typeof startPartyRegen === "function") {
-        // startPartyRegen('neon'); 
+         startPartyRegen('neon', '.app-container'); 
     }
 
     const txtQuiz = document.getElementById('quizSpelerNaam');
@@ -91,7 +91,7 @@ function controleerJaar(knopElement, gekozenJaar, correctJaar) {
                     // Ruim de overgebleven vallende deeltjes direct netjes op
                     document.querySelectorAll('.party-drop').forEach(drop => drop.remove());
                 }
-            }, 1000);
+            }, 2000);
         }
     } else {
         knopElement.style.borderColor = "var(--accent-color)";
@@ -136,7 +136,7 @@ function toonEindstand() {
     
     // 🪝 EFFECT HAAKJE: Oneindige gouden regen op het eindscherm
     if (typeof startPartyRegen === "function") {
-        startPartyRegen('goud');
+        //startPartyRegen('goud');
     }
 }
 
