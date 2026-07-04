@@ -48,6 +48,10 @@ sort($jaren_lijst);
     <!-- 🎛️ GEKOPPELDE COMPONENT: DESIGN/STYLING -->
     <?php require_once('comp_stijl.php'); ?>
     
+    <!-- JBL STYLE EN EFFECT -->
+    <?php require_once('comp_jbl_style.php'); ?>
+    <script src="comp_jbl_effect.js"></script>
+    
     <!-- 🪟 GEKOPPELDE EFFECTEN (AAN/UIT ZETTEN DOOR REGELEMENT WEG TE HALEN) -->
     <script src="comp_regen_effect.js"></script>
     <script src="comp_fout_effect.js"></script>
