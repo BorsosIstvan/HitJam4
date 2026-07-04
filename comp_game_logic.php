@@ -61,7 +61,7 @@ function laadBeurtScherm() {
 function activeerQuizSectie() {
     wisselScherm('schermQuiz');
     
-    if (typeof toggleDiscoAchtergrond === "function") { toggleDiscoAchtergrond(true); }
+    if (typeof toggleDiscoAchtergrond === "function") { toggleWinampVisualizer(true); }
 
     const txtQuiz = document.getElementById('quizSpelerNaam');
     if(txtQuiz && spelers[huidigeSpelerIndex]) {
@@ -74,7 +74,7 @@ function activeerQuizSectie() {
 
 function controleerJaar(knop, gekozen, correct) {
     document.querySelectorAll('.btn-jaar').forEach(b => b.disabled = true);
-    if (typeof toggleDiscoAchtergrond === "function") { toggleDiscoAchtergrond(false); }
+    if (typeof toggleDiscoAchtergrond === "function") { toggleWinampVisualizer(false); }
 
     const txt = document.getElementById('quizFeedbackText');
     if (gekozen === correct) {
