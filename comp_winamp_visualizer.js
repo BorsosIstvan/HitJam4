@@ -1,5 +1,5 @@
 /**
- * HitJam Modulair Component: Winamp Pro Multi-Visualizer Engine
+ * HitJam Modulair Component: Winamp Pro Multi-Visualizer Engine v6.0
  */
 
 let audioContext = null;
@@ -9,7 +9,7 @@ let visualizerCanvas = null;
 let canvasCtx = null;
 let animationFrameId = null;
 
-// Dit onthoudt welke modus er deze beurt actief is (willekeurig gekozen)
+// Dit onthoudt welke modus er deze beurt actief is (Nu keuze uit 1, 2, 3 of 4!)
 let actieveWinampModus = 1; 
 
 (function injecteerWinampProCSS() {
@@ -22,7 +22,7 @@ let actieveWinampModus = 1;
             opacity: 0; transition: opacity 0.4s ease;
         }
         .winamp-active .winamp-canvas {
-            opacity: 0.35; /* Iets duidelijker aanwezig voor de balken */
+            opacity: 0.35;
         }
     `;
     document.head.appendChild(style);
@@ -42,8 +42,6 @@ function initWinampAudioEngine() {
 
         audioContext = new (window.AudioContext || window.webkitAudioContext)();
         analyser = audioContext.createAnalyser();
-        
-        // fftSize op 256 zorgt voor een perfecte balans tussen vloeiende balken en snelheid
         analyser.fftSize = 256; 
 
         const source = audioContext.createMediaElementSource(audioElement);
@@ -74,7 +72,7 @@ function renderWinampVisuals() {
     canvasCtx.clearRect(0, 0, width, height);
 
     // =============================================================
-    // MODUS 1: RETRO NEON OSCILLOSCOPE (De vertrouwde golflijn)
+    // MODUS 1: RETRO NEON OSCILLOSCOPE (De golflijn)
     // =============================================================
     if (actieveWinampModus === 1) {
         analyser.getByteTimeDomainData(dataArray);
@@ -98,65 +96,90 @@ function renderWinampVisuals() {
     }
     
     // =============================================================
-    // MODUS 2: RETRO SPECTRUM BARS (De klassieke Winamp VU-balkjes)
+    // MODUS 2: RETRO SPECTRUM BARS (De Winamp VU-balkjes)
     // =============================================================
     else if (actieveWinampModus === 2) {
         analyser.getByteFrequencyData(dataArray);
-        canvasCtx.shadowBlur = 0; // Geen zware blur voor strakke retro-look
+        canvasCtx.shadowBlur = 0;
 
         const barWidth = (width / analyser.frequencyBinCount) * 1.5;
         let barHeight;
         let x = 0;
 
         for (let i = 0; i < analyser.frequencyBinCount; i++) {
-            barHeight = dataArray[i] * 1.2; // Vermenigvuldig voor extra uitslag
+            barHeight = dataArray[i] * 1.2;
 
-            // Maak een klassiek kleurverloop per balk: onder cyaan, midden paars, boven roze
             const gradient = canvasCtx.createLinearGradient(0, height, 0, height - barHeight);
             gradient.addColorStop(0, '#00f0ff');
             gradient.addColorStop(0.5, '#9d00ff');
             gradient.addColorStop(1, '#ff007f');
 
             canvasCtx.fillStyle = gradient;
-            // Teken de balk vanaf de bodem van de app-container omhoog
             canvasCtx.fillRect(x, height - barHeight, barWidth - 4, barHeight);
-
             x += barWidth;
         }
     }
     
     // =============================================================
-    // MODUS 3: MUSICAL PLASMA GLOW (De pulserende bass-cirkel)
+    // MODUS 3: 🔥 FIX! MUSICAL PLASMA GLOW (De pulserende cirkel)
     // =============================================================
     else if (actieveWinampModus === 3) {
         analyser.getByteFrequencyData(dataArray);
 
-        // Bereken het gemiddelde volume van de bas (de eerste paar frequenties)
-        let basVolume = 0;
-        const basFrequenties = 10;
-        for (let i = 0; i < basFrequenties; i++) {
-            basVolume += dataArray[i];
+        // FIX: We meten nu het GEMIDDELDE volume van het HELE nummer (alle frequenties), 
+        // zodat de Paarse Gloed nu gegarandeerd reageert op zang, beats én gitaren!
+        let totaalVolume = 0;
+        for (let i = 0; i < dataArray.length; i++) {
+            totaalVolume += dataArray[i];
         }
-        basVolume = basVolume / basFrequenties; // Gemiddelde bas-waarde tussen 0 en 255
+        let gemiddeldVolume = totaalVolume / dataArray.length;
 
-        // Bepaal de grootte van de cirkel op basis van de bas-dreun
-        const basisStraal = 70;
-        const actueleStraal = basisStraal + (basVolume * 0.5);
+        // Laat de cirkel meebewegen op de muziek
+        const basisStraal = 40;
+        const actueleStraal = basisStraal + (gemiddeldVolume * 1.1); // Krachtigere uitslag
 
-        // Teken een gloeiende cirkel exact in het midden van je telefoonscherm
         canvasCtx.beginPath();
         canvasCtx.arc(width / 2, height / 2, actueleStraal, 0, 2 * Math.PI);
         
-        canvasCtx.shadowBlur = 30;
+        canvasCtx.shadowBlur = 40;
         canvasCtx.shadowColor = '#9d00ff';
         
-        const radialGradient = canvasCtx.createRadialGradient(width/2, height/2, 10, width/2, height/2, actueleStraal);
-        radialGradient.addColorStop(0, 'rgba(255, 0, 127, 0.4)');
-        radialGradient.addColorStop(0.6, 'rgba(157, 0, 255, 0.2)');
+        const radialGradient = canvasCtx.createRadialGradient(width/2, height/2, 5, width/2, height/2, actueleStraal);
+        radialGradient.addColorStop(0, 'rgba(255, 0, 127, 0.5)'); // Neon roze kern
+        radialGradient.addColorStop(0.5, 'rgba(157, 0, 255, 0.3)'); // Paarse gloed
         radialGradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
 
         canvasCtx.fillStyle = radialGradient;
         canvasCtx.fill();
+    }
+
+    // =============================================================
+    // MODUS 4: ✨ NIEUW! RETRO DISCO BEAT STROBE
+    // =============================================================
+    else if (actieveWinampModus === 4) {
+        analyser.getByteFrequencyData(dataArray);
+
+        // Meet de intensiteit van de beat/zang
+        let volume = 0;
+        for (let i = 0; i < dataArray.length; i++) { volume += dataArray[i]; }
+        let volumePercentage = (volume / dataArray.length) / 255;
+
+        // Als er een harde beat of climax is, flitst de achtergrond heel kort op
+        if (volumePercentage > 0.4) {
+            canvasCtx.fillStyle = `rgba(0, 240, 255, ${volumePercentage * 0.25})`; // Neon cyaan flits
+            canvasCtx.fillRect(0, 0, width, height);
+            
+            // Teken tegelijkertijd twee vette retro laser-lijnen aan de zijkanten
+            canvasCtx.lineWidth = 4;
+            canvasCtx.strokeStyle = '#ff007f';
+            canvasCtx.shadowBlur = 20;
+            canvasCtx.shadowColor = '#ff007f';
+            
+            canvasCtx.beginPath();
+            canvasCtx.moveTo(0, 0); canvasCtx.lineTo(0, height);
+            canvasCtx.moveTo(width, 0); canvasCtx.lineTo(width, height);
+            canvasCtx.stroke();
+        }
     }
 }
 
@@ -173,8 +196,8 @@ function toggleWinampVisualizer(status = true) {
             audioContext.resume();
         }
         
-        // 🔥 SLIMME CASINO/DISCO TRICK: Kies elke beurt een willekeurige Winamp modus (1, 2 of 3)
-        actieveWinampModus = Math.floor(Math.random() * 3) + 1;
+        // Kiest nu willekeurig uit VIER verschillende Winamp-stijlen!
+        actieveWinampModus = Math.floor(Math.random() * 4) + 1;
         
         app.classList.add('winamp-active');
         if(!animationFrameId) renderWinampVisuals();
