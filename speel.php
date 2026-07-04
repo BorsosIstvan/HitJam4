@@ -73,7 +73,7 @@ sort($jaren_lijst);
         <div id="schermBeurt" class="game-screen">
             <div class="turn-announcement">Nu aan de beurt:</div>
             <h2 class="current-player-name" id="txtHuidigeSpeler">Speler</h2>
-            <button class="btn btn-start-track" onclick="activeerQuizSectie()">自由 HOOR HET LIED</button>
+            <button class="btn btn-start-track" onclick="activeerQuizSectie()">🎵 HOOR HET LIED</button>
         </div>
 
         <!-- SCHERM 3: QUIZ -->

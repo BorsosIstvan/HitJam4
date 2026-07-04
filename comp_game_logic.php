@@ -34,18 +34,41 @@ function startHetSpel() {
     huidigeSpelerIndex = 0; huidigeRonde = 1; laadBeurtScherm();
 }
 
+/**
+ * 🔥 NIEUWE MODULAIRE HULPFUNCTIE: Bouwt een live scoreoverzicht voor de schermen
+ */
+function bouwLiveScorebordUI() {
+    let html = '<div style="margin-bottom:20px; font-size:13px; background:rgba(255,255,255,0.03); padding:10px; border-radius:12px; display:flex; justify-content:center; gap:12px; flex-wrap:wrap; border:1px solid var(--border-color);">';
+    spelers.forEach(s => {
+        // Als de speler nu aan de beurt is, lichten we zijn score subtiel op in het groen
+        let isActief = s.naam === spelers[huidigeSpelerIndex].naam ? 'border-bottom:2px solid var(--success-color); padding-bottom:2px; font-weight:900; color:#fff;' : 'color:#888;';
+        html += `<span style="${isActief}">👤 ${s.naam}: ${s.score}p</span>`;
+    });
+    html += '</div>';
+    return html;
+}
+
 function laadBeurtScherm() {
     wisselScherm('schermBeurt');
-    document.getElementById('txtHuidigeSpeler').innerText = spelers[huidigeSpelerIndex].naam;
+    const txt = document.getElementById('txtHuidigeSpeler');
+    if(txt && spelers[huidigeSpelerIndex]) {
+        // 🔥 PAS DIT AAN: Plak de live scorebalk direct boven de naam van de speler
+        const liveScorebord = bouwLiveScorebordUI();
+        txt.innerHTML = `${liveScorebord}<div style="font-size:14px; color:#aaa; text-transform:uppercase; letter-spacing:1px; margin-bottom:5px;">Ronde ${huidigeRonde} van ${maxRondes}</div><div style="font-size:32px; font-weight:900; color:var(--success-color);">${spelers[huidigeSpelerIndex].naam}</div>`;
+    }
 }
 
 function activeerQuizSectie() {
     wisselScherm('schermQuiz');
     
-    // 🪝 HAAKJE: DISCO ACHTERGROND EFFECT
     if (typeof toggleDiscoAchtergrond === "function") { toggleDiscoAchtergrond(true); }
 
-    document.getElementById('quizSpelerNaam').innerText = `Beurt van: ${spelers[huidigeSpelerIndex].naam}`;
+    const txtQuiz = document.getElementById('quizSpelerNaam');
+    if(txtQuiz && spelers[huidigeSpelerIndex]) {
+        // 🔥 PAS DIT AAN: Toon ook tijdens de jaarknoppen de live scores bovenin beeld
+        const liveScorebord = bouwLiveScorebordUI();
+        txtQuiz.innerHTML = `${liveScorebord}<div style="font-weight:bold; font-size:16px; margin-top:10px; text-transform:uppercase; letter-spacing:1px;">🎯 Kies het jaar, ${spelers[huidigeSpelerIndex].naam}:</div>`;
+    }
     document.getElementById('partyAudioEngine').play().catch(e => console.log("Klik vereist"));
 }
 
@@ -58,24 +81,20 @@ function controleerJaar(knop, gekozen, correct) {
         knop.style.borderColor = "#00ffcc"; txt.innerHTML = "<span style='color:#00ffcc;'>🎉 GOED! (+100p)</span>";
         spelers[huidigeSpelerIndex].score += 100;
         
-        // 🪝 HAAKJE: GOED ANTWOORD EFFECTEN
         if (typeof startPartyRegen === "function") { startPartyRegen('goud'); }
         if (typeof startHitExplosie === "function") { startHitExplosie(); }
     } else {
         knop.style.borderColor = "#ff2d55"; txt.innerHTML = "<span style='color:#ff2d55;'>❌ FOUT!</span>";
         document.querySelectorAll('.btn-jaar').forEach(b => { if(parseInt(b.innerText)===correct) b.style.borderColor="#00ffcc"; });
         
-        // 🪝 HAAKJE: FOUT ANTWOORD EFFECT
         if (typeof startFoutStroboscoop === "function") { startFoutStroboscoop(); }
     }
     sessionStorage.setItem('hjPartySpelers', JSON.stringify(spelers));
-    document.getElementById('feedbackSefctie', document.getElementById('feedbackSectie').style.display = "block");
+    document.getElementById('feedbackSectie').style.display = "block";
 }
 
 function volgendeBeurt() {
     document.getElementById('partyAudioEngine').pause();
-    
-    // 🪝 HAAKJE: EFFECTEN OPHEFFEN EN RESETTEN
     if (typeof stopPartyRegen === "function") { stopPartyRegen(); }
 
     huidigeSpelerIndex++;
@@ -90,7 +109,6 @@ function toonEindstand() {
     let gerangschikt = [...spelers].sort((a, b) => b.score - a.score);
     gerangschikt.forEach((s, i) => { box.innerHTML += `<div class="player-badge"><span>#${i+1} ${s.naam}</span><strong>${s.score} Pnt</strong></div>`; });
     
-    // 🪝 HAAKJE: EINDWINNAAR EFFECT
     if (typeof startPartyRegen === "function") { startPartyRegen('goud'); }
 }
 
