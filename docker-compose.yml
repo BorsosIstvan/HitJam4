@@ -2,8 +2,8 @@
 
 services:
   webserver:
-    container_name: mijn-website
-    image: mijn-php-app
+    container_name: hitjam4
+    image: hitjam4-app
     ports:
       - "8080:80"
     volumes:
