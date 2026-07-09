@@ -8,5 +8,5 @@ services:
       - "8088:80"
     volumes:
       - .:/var/www/html
-      - /HitData:/var/www/html/HitData
+      - ./HitData:/var/www/html/HitData
     restart: always
