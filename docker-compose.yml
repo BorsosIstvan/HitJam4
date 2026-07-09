@@ -1,0 +1,12 @@
+
+
+services:
+  webserver:
+    container_name: mijn-website
+    image: mijn-php-app
+    ports:
+      - "8080:80"
+    volumes:
+      - .:/var/www/html
+      - /HitData:/var/www/html/HitData
+    restart: always
