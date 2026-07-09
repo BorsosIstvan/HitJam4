@@ -7,7 +7,7 @@ error_reporting(E_ALL);
 header('Content-Type: text/html; charset=utf-8');
 echo "<h1>HitJam3 Database Builder</h1>";
 
-$db_file = '/var/www/html/HitData/hitjam3.db';
+$db_file = '/var/www/html/HitData/hitjam2.db';
 $old_db_file = '/var/www/html/HitData/hitjam2.db';
 
 try {
